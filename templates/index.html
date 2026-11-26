@@ -3,10 +3,10 @@
 <section class="hero">
   <div class="hero-copy"><div class="eyebrow"><span class="dot"></span> YOUR TEAM'S HOME BASE</div>
     <h1>Good ideas grow<br><em>around the camp.</em></h1>
-    <p>A place for our FRC community to swap ideas, share updates, and build something great together.</p>
+    <p>A place for the RoboJacks community to swap ideas, share updates, and build something great together.</p>
     <div class="hero-actions"><a class="button light" href="{{ url_for('new_topic') }}">Start a discussion <span>↗</span></a><a class="hero-link" href="#board">Explore the board ↓</a></div>
   </div>
-  <div class="hero-art" aria-hidden="true"><div class="art-sun"></div><div class="art-mountain one"></div><div class="art-mountain two"></div><div class="art-tree t1">✳</div><div class="art-tree t2">✳</div><div class="art-caption">BUILD TOGETHER<br>GROW TOGETHER <span>✳</span></div></div>
+  <div class="hero-art"><div class="art-sun" aria-hidden="true"></div><div class="art-mountain one" aria-hidden="true"></div><div class="art-mountain two" aria-hidden="true"></div><div class="hero-logo"><img src="{{ url_for('static', filename='robojacks-logo.png') }}" alt="RoboJacks axe and circuit-board logo"></div><div class="art-caption" aria-hidden="true">BUILD TOGETHER<br>GROW TOGETHER <span>✳</span></div></div>
 </section>
 <div class="content-grid" id="board">
   <section class="board">
@@ -32,7 +32,7 @@
       {% else %}<p class="queue-message">{{ queue_error }}</p>{% endif %}
       <a class="side-link" href="https://frc.nexus/" target="_blank" rel="noopener noreferrer">Open Nexus <span>↗</span></a>
     </div>
-    <div class="side-card welcome"><span class="eyebrow muted">A NOTE FROM CAMP</span><h2>Everyone has a seat here.</h2><p>Ask questions, share what you’re working on, and help each other learn. Gracious professionalism starts with us.</p><span class="signature">See you around the campfire ✳</span></div>
+    <div class="side-card welcome"><span class="eyebrow muted">A NOTE FROM CAMP</span><h2>Everyone has a seat here.</h2><p>Ask questions, share what you’re working on, and help each other learn. Gracious professionalism starts with us.</p><span class="signature">See you around the campfire ✳</span><div class="team-wordmark"><img src="{{ url_for('static', filename='robojacks.png') }}" alt="RoboJacks"></div></div>
     <div class="side-card scouting"><span class="eyebrow muted">IN THE FIELD</span><h2>Ready to scout?</h2><p>Open the offline scouting app to collect match data, even when the venue Wi-Fi takes a timeout.</p><a class="side-link" href="https://whistlepunkprogram.github.io/rebuilt-scouting/" target="_blank" rel="noopener noreferrer">Launch scouting app <span>↗</span></a></div>
     <div class="side-note">✳ <span><strong>FIRST Robotics Competition</strong><br>Better robots. Better humans.</span></div>
   </aside>
