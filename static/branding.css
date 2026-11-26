@@ -29,6 +29,17 @@
   width: 100%;
   height: auto;
 }
+.data-source { border-top: 1px solid var(--line); margin-top: 30px; }
+.data-link { display: inline-block; margin: 14px 0; font-size: 12px; font-weight: 700; color: #376b50; }
+.data-error { background: #fbe9df; color: #874d36 !important; padding: 14px; border-radius: 4px; }
+.data-list { margin: 12px 0; border-top: 1px solid var(--line); }
+.data-list > div { display: grid; grid-template-columns: minmax(110px, 1fr) minmax(0, 2fr); gap: 12px; padding: 9px 0; border-bottom: 1px solid var(--line); }
+.data-list dt { color: #718675; overflow-wrap: anywhere; }
+.data-list dd { margin: 0; overflow-wrap: anywhere; }
+.data-list .data-list { margin: 0; }
+.data-items { margin: 0; padding-left: 20px; }
+.data-items li { margin-bottom: 8px; }
+.data-empty { color: #95a298; }
 @media (max-width: 850px) {
   .hero-logo { width: 160px; height: 225px; top: 50px; }
 }

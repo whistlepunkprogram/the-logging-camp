@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Team data · The Logging Camp{% endblock %}
+{% macro show_data(value) %}
+  {% if value is mapping %}
+    {% if value %}<dl class="data-list">{% for key, item in value.items() %}<div><dt>{{ key|replace('_', ' ') }}</dt><dd>{{ show_data(item) }}</dd></div>{% endfor %}</dl>{% else %}<span class="data-empty">No data</span>{% endif %}
+  {% elif value is sequence and value is not string %}
+    {% if value %}<ul class="data-items">{% for item in value %}<li>{{ show_data(item) }}</li>{% endfor %}</ul>{% else %}<span class="data-empty">No data</span>{% endif %}
+  {% elif value is none %}<span class="data-empty">Not available</span>
+  {% elif value is boolean %}{{ 'Yes' if value else 'No' }}
+  {% else %}{{ value }}{% endif %}
+{% endmacro %}
+{% block content %}
+<section class="form-card team-data"><a class="back" href="{{ url_for('index') }}">← Back to the board</a>
+  <div class="eyebrow muted">ROBOJACKS · FRC 4674</div><h1>2026 team data.</h1>
+  <p>Statistics and event results from Match13 and The Blue Alliance. Data is cached for up to 10 minutes.</p>
+  <div class="data-source"><h2>Match13</h2><p>Season ratings and statistics. Field names and values are supplied by Match13.</p>
+    <a class="data-link" href="https://www.match13.com/team/4674?year=2026" target="_blank" rel="noopener noreferrer">Open the Match13 team page ↗</a>
+    {% if match13_error %}<p class="data-error">{{ match13_error }}</p>{% else %}{{ show_data(match13) }}{% endif %}
+  </div>
+  <div class="data-source"><h2>The Blue Alliance</h2><p>Event status, rankings, and records for the 2026 season.</p>
+    <a class="data-link" href="https://www.thebluealliance.com/team/4674/2026" target="_blank" rel="noopener noreferrer">Open the Blue Alliance team page ↗</a>
+    {% if tba_error %}<p class="data-error">{{ tba_error }}</p>{% else %}{{ show_data(tba) }}{% endif %}
+  </div>
+</section>
+{% endblock %}

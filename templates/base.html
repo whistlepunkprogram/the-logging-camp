@@ -13,6 +13,7 @@
   <a class="brand" href="{{ url_for('index') }}"><span class="brand-mark">✳</span><span>THE LOGGING CAMP<small>THE ROBOJACKS COMMUNITY</small></span></a>
   <nav aria-label="Main navigation">
     <a href="{{ url_for('index') }}">Discussion board</a>
+    <a href="{{ url_for('team_stats') }}">Team data</a>
     <a href="https://whistlepunkprogram.github.io/rebuilt-scouting/" target="_blank" rel="noopener noreferrer">Scouting app ↗</a>
     {% if g.user and g.user.is_admin %}<a href="{{ url_for('admin') }}">Admin</a>{% endif %}
     {% if g.user %}

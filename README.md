@@ -23,6 +23,10 @@ Open http://127.0.0.1:5000. Keep the same `SECRET_KEY` across restarts or everyo
 
 Obtain an API key from [Nexus](https://frc.nexus/api), set `NEXUS_API_KEY` in the server environment, and restart the app. In Admin, set the Nexus event key and team number. The board shows that team's matches and their Nexus statuses, cached for 30 seconds; Nexus data is only accurate at events using Nexus for queuing. This is informational, not a replacement for official event instructions. See the [Nexus API documentation](https://frc.nexus/api/v1/docs). The key stays on the server.
 
+## Team data
+
+The Team data tab displays team 4674's 2026 Match13 season data and The Blue Alliance event statuses. Obtain keys from your [Match13 account](https://www.match13.com/docs/api) and [The Blue Alliance account dashboard](https://www.thebluealliance.com/apidocs), set `MATCH13_API_KEY` and `TBA_API_KEY` on the server, and restart the app. The keys are never sent to the browser. Results are cached for ten minutes per server process. Both sources are independent: if one is unavailable, the other can still load. The tab also links to the original team pages.
+
 ## Deployment
 
 Use a production WSGI server behind HTTPS, not Flask's development server. Set a persistent, random `SECRET_KEY`, leave `COOKIE_SECURE` at its default (`1`), and persist the instance directory on a volume. SQLite is intended for a single host with a persistent filesystem; do not deploy multiple independent instances against separate databases. The default login/registration rate limiter is process-local; for multiple workers configure `RATELIMIT_STORAGE_URI` to a shared Flask-Limiter supported backend and install its required client. Behind a reverse proxy the limiter sees the proxy address by default; configure a trusted proxy middleware such as Werkzeug's ProxyFix for your exact proxy topology, and block direct access to the app, before relying on per-client limits. Review hosting, backups, privacy, moderation, and account-recovery procedures before publishing. There is no password reset or email notification; administrators must communicate account approvals separately.

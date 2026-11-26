@@ -119,6 +119,7 @@ def settings():
 
 CATEGORIES = ("General", "Build", "Programming", "Competition", "Outreach")
 _nexus_cache = {}
+_team_data_cache = {}
 
 
 def queue_status(event, team):
@@ -148,6 +149,40 @@ def queue_status(event, team):
     except (requests.RequestException, ValueError, TypeError):
         app.logger.warning("Unable to retrieve Nexus event data for %s", event, exc_info=True)
         return None, "Nexus data is unavailable right now. Check the event key and try again later."
+
+
+def team_data(source):
+    configs = {
+        "match13": ("MATCH13_API_KEY", "https://actions.match13.com/v1/teams/4674/years/2026", "Authorization"),
+        "tba": ("TBA_API_KEY", "https://www.thebluealliance.com/api/v3/team/frc4674/events/2026/statuses", "X-TBA-Auth-Key"),
+    }
+    env_name, url, header = configs[source]
+    key = os.environ.get(env_name)
+    if not key:
+        return None, f"Set {env_name} on the server to load this data."
+    cached = _team_data_cache.get(source)
+    if cached and cached[0] == key and time.monotonic() - cached[1] < 600:
+        return cached[2], None
+    try:
+        token = f"Bearer {key}" if source == "match13" else key
+        response = requests.get(url, headers={header: token}, timeout=5)
+        response.raise_for_status()
+        data = response.json()
+        if not isinstance(data, (dict, list)):
+            raise ValueError("Invalid team data response")
+        _team_data_cache[source] = (key, time.monotonic(), data)
+        return data, None
+    except (requests.RequestException, ValueError):
+        app.logger.warning("Unable to retrieve %s team data", source, exc_info=True)
+        return None, "Data is unavailable. Check the server API key or try again later."
+
+
+@app.get("/team-data")
+def team_stats():
+    match13, match13_error = team_data("match13")
+    tba, tba_error = team_data("tba")
+    return render_template("team_data.html", match13=match13, match13_error=match13_error,
+                           tba=tba, tba_error=tba_error)
 
 
 @app.route("/")

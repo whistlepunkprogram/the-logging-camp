@@ -15,6 +15,7 @@ class CampTest(unittest.TestCase):
         self.tmp = tempfile.TemporaryDirectory()
         camp.app.config.update(TESTING=True, DATABASE=os.path.join(self.tmp.name, "test.sqlite3"), WTF_CSRF_ENABLED=False)
         camp._nexus_cache.clear()
+        camp._team_data_cache.clear()
         with camp.app.app_context():
             camp.app.test_cli_runner().invoke(args=["init-db"])
             camp.db().execute("INSERT INTO users (username, password_hash, approved, is_admin) VALUES (?, ?, 1, 1)",
@@ -96,6 +97,35 @@ class CampTest(unittest.TestCase):
         result, error = camp.queue_status("2026test", "254")
         self.assertIsNone(result)
         self.assertIn("unavailable", error)
+
+    @patch.dict(os.environ, {"MATCH13_API_KEY": "match-secret", "TBA_API_KEY": "tba-secret"})
+    @patch("app.requests.get")
+    def test_team_data_sources_render_and_cache_independently(self, get):
+        def respond(url, **kwargs):
+            response = unittest.mock.Mock()
+            if "match13" in url:
+                self.assertEqual(kwargs["headers"], {"Authorization": "Bearer match-secret"})
+                response.json.return_value = {"rating": 107.7, "details": {"auto": 16.3}}
+            else:
+                self.assertEqual(kwargs["headers"], {"X-TBA-Auth-Key": "tba-secret"})
+                response.json.return_value = {"2026mn": {"qual": {"ranking": {"rank": 12}}}}
+            return response
+        get.side_effect = respond
+        page = self.client.get("/team-data").data
+        self.assertIn(b"107.7", page)
+        self.assertIn(b"2026mn", page)
+        self.assertIn(b"12", page)
+        self.assertNotIn(b"match-secret", page)
+        self.assertNotIn(b"tba-secret", page)
+        self.client.get("/team-data")
+        self.assertEqual(get.call_count, 2)
+
+    @patch.dict(os.environ, {"MATCH13_API_KEY": "", "TBA_API_KEY": ""})
+    def test_team_data_missing_keys_are_visible(self):
+        page = self.client.get("/team-data").data
+        self.assertIn(b"Set MATCH13_API_KEY", page)
+        self.assertIn(b"Set TBA_API_KEY", page)
+        self.assertIn(b"thebluealliance.com/team/4674/2026", page)
 
     def test_csrf_required_for_posts(self):
         camp.app.config["WTF_CSRF_ENABLED"] = True
