@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="hero">
+  <div class="hero-copy"><div class="eyebrow"><span class="dot"></span> YOUR TEAM'S HOME BASE</div>
+    <h1>Good ideas grow<br><em>around the camp.</em></h1>
+    <p>A place for our FRC community to swap ideas, share updates, and build something great together.</p>
+    <div class="hero-actions"><a class="button light" href="{{ url_for('new_topic') }}">Start a discussion <span>↗</span></a><a class="hero-link" href="#board">Explore the board ↓</a></div>
+  </div>
+  <div class="hero-art" aria-hidden="true"><div class="art-sun"></div><div class="art-mountain one"></div><div class="art-mountain two"></div><div class="art-tree t1">✳</div><div class="art-tree t2">✳</div><div class="art-caption">BUILD TOGETHER<br>GROW TOGETHER <span>✳</span></div></div>
+</section>
+<div class="content-grid" id="board">
+  <section class="board">
+    <div class="section-heading"><div><div class="eyebrow muted">THE COMMUNITY</div><h2>Camp discussions <span class="heading-spark">✳</span></h2><p>Pull up a log and join the conversation.</p></div><a class="button dark" href="{{ url_for('new_topic') }}">＋ &nbsp; New discussion</a></div>
+    <div class="filters">
+      <div class="tabs"><a class="{{ 'active' if not category else '' }}" href="{{ url_for('index', q=search) }}">All topics</a>{% for c in categories %}<a class="{{ 'active' if category == c else '' }}" href="{{ url_for('index', category=c, q=search) }}">{{ c }}</a>{% endfor %}</div>
+      <form class="search" method="get"><input type="hidden" name="category" value="{{ category }}"><label class="sr-only" for="q">Search discussions</label><input id="q" name="q" value="{{ search }}" placeholder="Search discussions"><button aria-label="Search">⌕</button></form>
+    </div>
+    <div class="topic-list">
+      {% for topic in topics %}
+      <a class="topic-row" href="{{ url_for('topic', topic_id=topic.id) }}">
+        <div class="topic-icon">{{ topic.category[0] }}</div><div class="topic-main"><div class="topic-meta"><span class="tag">{{ topic.category }}</span>{% if topic.pinned %}<span class="pinned">✳ PINNED</span>{% endif %}{% if topic.locked %}<span>LOCKED</span>{% endif %}</div><h3>{{ topic.title }}</h3><p>{{ topic.body|truncate(130) }}</p><div class="byline">Started by <strong>{{ topic.username }}</strong> · {{ topic.created_at }} UTC</div></div><div class="replies"><strong>{{ topic.reply_count }}</strong><span>replies</span></div><span class="row-arrow">↗</span>
+      </a>
+      {% else %}<div class="empty"><div>✳</div><h3>No discussions yet</h3><p>There’s room around the campfire. Start the conversation!</p></div>{% endfor %}
+    </div>
+    {% if page > 1 or has_next %}<div class="pagination">{% if page > 1 %}<a href="{{ url_for('index', category=category, q=search, page=page-1) }}">← Previous</a>{% endif %}<span>Page {{ page }}</span>{% if has_next %}<a href="{{ url_for('index', category=category, q=search, page=page+1) }}">Next →</a>{% endif %}</div>{% endif %}
+  </section>
+  <aside>
+    <div class="side-card queue-card"><div class="card-top"><span class="eyebrow">EVENT DAY</span><span class="live"><span class="dot"></span> NEXUS</span></div><h2>Queue watch <span>↗</span></h2><p>Keep an eye on your team’s match status, right from camp.</p>
+      {% if config.event and config.team %}<div class="event-label"><span>EVENT {{ config.event|upper }}</span><strong>TEAM {{ config.team }}</strong></div>{% endif %}
+      {% if queue %}<p class="asof">Data as of {% if queue.data_as_of %}<time data-ms="{{ queue.data_as_of }}">{{ queue.data_as_of }}</time>{% else %}unknown{% endif %}</p>
+        {% for match in queue.matches %}<div class="match"><span>{{ match.label }}</span><strong>{{ match.status }}</strong></div>{% else %}<p class="queue-message">No matches found for this team.</p>{% endfor %}
+      {% else %}<p class="queue-message">{{ queue_error }}</p>{% endif %}
+      <a class="side-link" href="https://frc.nexus/" target="_blank" rel="noopener noreferrer">Open Nexus <span>↗</span></a>
+    </div>
+    <div class="side-card welcome"><span class="eyebrow muted">A NOTE FROM CAMP</span><h2>Everyone has a seat here.</h2><p>Ask questions, share what you’re working on, and help each other learn. Gracious professionalism starts with us.</p><span class="signature">See you around the campfire ✳</span></div>
+    <div class="side-card scouting"><span class="eyebrow muted">IN THE FIELD</span><h2>Ready to scout?</h2><p>Open the offline scouting app to collect match data, even when the venue Wi-Fi takes a timeout.</p><a class="side-link" href="https://whistlepunkprogram.github.io/rebuilt-scouting/" target="_blank" rel="noopener noreferrer">Launch scouting app <span>↗</span></a></div>
+    <div class="side-note">✳ <span><strong>FIRST Robotics Competition</strong><br>Better robots. Better humans.</span></div>
+  </aside>
+</div>
+<script>document.querySelectorAll('time[data-ms]').forEach(el => { const date = new Date(Number(el.dataset.ms)); if (!isNaN(date)) el.textContent = date.toLocaleString(); });</script>
+{% endblock %}

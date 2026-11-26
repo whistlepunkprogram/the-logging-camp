@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#183c34">
+  <title>{% block title %}The Logging Camp{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<header class="topbar">
+  <a class="brand" href="{{ url_for('index') }}"><span class="brand-mark">✳</span><span>THE LOGGING CAMP<small>FRC TEAM COMMUNITY</small></span></a>
+  <nav aria-label="Main navigation">
+    <a href="{{ url_for('index') }}">Discussion board</a>
+    <a href="https://whistlepunkprogram.github.io/rebuilt-scouting/" target="_blank" rel="noopener noreferrer">Scouting app ↗</a>
+    {% if g.user and g.user.is_admin %}<a href="{{ url_for('admin') }}">Admin</a>{% endif %}
+    {% if g.user %}
+      <span class="nav-user">{{ g.user.username }}</span>
+      <form method="post" action="{{ url_for('logout') }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button class="nav-link">Sign out</button></form>
+    {% else %}<a href="{{ url_for('login') }}">Sign in</a><a class="nav-button" href="{{ url_for('register') }}">Join the camp</a>{% endif %}
+  </nav>
+</header>
+<main>
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% for kind, message in messages %}<div class="flash {{ kind }}" role="status">{{ message }}</div>{% endfor %}
+  {% endwith %}
+  {% block content %}{% endblock %}
+</main>
+<footer><span>✳ &nbsp; THE LOGGING CAMP</span><span>Built for the people behind the robots.</span><span>Not affiliated with FIRST or Nexus.</span></footer>
+</body>
+</html>

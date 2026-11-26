@@ -1,0 +1,7 @@
+{% extends "base.html" %}
+{% block title %}{{ 'Join' if mode == 'register' else 'Sign in' }} · The Logging Camp{% endblock %}
+{% block content %}
+<section class="form-card narrow"><a class="back" href="{{ url_for('index') }}">← Back to the board</a><div class="eyebrow muted">WELCOME TO CAMP</div><h1>{{ 'Join the conversation.' if mode == 'register' else 'Welcome back.' }}</h1><p>{{ 'Request an account to post. An admin will need to approve it first.' if mode == 'register' else 'Sign in to join the conversation.' }}</p>
+<form method="post"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><label for="username">Username</label><input id="username" name="username" required minlength="3" maxlength="30" autocomplete="username"><label for="password">Password</label><input id="password" name="password" type="password" required {% if mode == 'register' %}minlength="12" maxlength="256" autocomplete="new-password"{% else %}autocomplete="current-password"{% endif %}><button class="button dark">{{ 'Request account' if mode == 'register' else 'Sign in' }} →</button></form>
+<p>{% if mode == 'register' %}Already a member? <a href="{{ url_for('login') }}">Sign in</a>{% else %}New around here? <a href="{{ url_for('register') }}">Request an account</a>{% endif %}</p></section>
+{% endblock %}
